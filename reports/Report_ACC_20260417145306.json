@@ -1,0 +1,425 @@
+{
+  "id": "ACC_20260417145306",
+  "timestamp": "2026-04-17T14:53:06.786575",
+  "timestamp_readable": "17 Apr 2026, 02:53:06 PM",
+  "confidence": 1.0,
+  "location": {
+    "lat": 17.3843,
+    "lng": 78.4583,
+    "address": "Hyderabad, Telangana, India",
+    "city": "Hyderabad",
+    "region": "Telangana",
+    "country": "India",
+    "postal": "500003"
+  },
+  "hospitals": [
+    {
+      "name": "Krishna Children's Hospital",
+      "lat": 17.4021334,
+      "lng": 78.4625295,
+      "distance_km": 2.03,
+      "address": "11-5423/A/B, Niloufer Road, Opp. Hanuman temple, Red Hills, Lakdikapool",
+      "phone": "040-66838383; 040- 66838481; 040-65247760",
+      "emergency": true,
+      "beds": 386,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Sunita Patel",
+          "specialty": "General Surgery",
+          "available": false,
+          "experience_years": 9
+        },
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Trauma Surgery",
+          "available": false,
+          "experience_years": 6
+        },
+        {
+          "name": "Dr. Anil Verma",
+          "specialty": "Trauma Surgery",
+          "available": false,
+          "experience_years": 19
+        },
+        {
+          "name": "Dr. Meena Rao",
+          "specialty": "Emergency Medicine",
+          "available": true,
+          "experience_years": 14
+        },
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 21
+        },
+        {
+          "name": "Dr. Lakshmi Iyer",
+          "specialty": "Orthopedic Surgery",
+          "available": false,
+          "experience_years": 17
+        }
+      ],
+      "available_doctors": 2,
+      "eta_minutes": 6
+    },
+    {
+      "name": "Mahavir Hospital and Research Centre",
+      "lat": 17.4036641,
+      "lng": 78.4570626,
+      "distance_km": 2.16,
+      "address": "10-1-1, Bhagwan Mahavir Marg, A.C Guards",
+      "phone": "+91-9627080581",
+      "emergency": true,
+      "beds": 153,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 24
+        },
+        {
+          "name": "Dr. Lakshmi Iyer",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 18
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Neurosurgery",
+          "available": false,
+          "experience_years": 10
+        },
+        {
+          "name": "Dr. Anil Verma",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 22
+        },
+        {
+          "name": "Dr. Mohammed Khalid",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 10
+        },
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 17
+        }
+      ],
+      "available_doctors": 5,
+      "eta_minutes": 6
+    },
+    {
+      "name": "Surojini Devi Eye Hospital",
+      "lat": 17.3990359,
+      "lng": 78.4447966,
+      "distance_km": 2.18,
+      "address": "Near 17.384, 78.458",
+      "phone": "+91-7809173342",
+      "emergency": true,
+      "beds": 92,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 5
+        },
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Emergency Medicine",
+          "available": false,
+          "experience_years": 8
+        },
+        {
+          "name": "Dr. Kavitha Reddy",
+          "specialty": "General Surgery",
+          "available": true,
+          "experience_years": 13
+        }
+      ],
+      "available_doctors": 2,
+      "eta_minutes": 6
+    },
+    {
+      "name": "Vasavi ENT Hospital",
+      "lat": 17.40681,
+      "lng": 78.4645023,
+      "distance_km": 2.59,
+      "address": "Near 17.384, 78.458",
+      "phone": "+91-9876236696",
+      "emergency": true,
+      "beds": 237,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Kavitha Reddy",
+          "specialty": "Neurosurgery",
+          "available": true,
+          "experience_years": 18
+        },
+        {
+          "name": "Dr. Lakshmi Iyer",
+          "specialty": "Neurosurgery",
+          "available": true,
+          "experience_years": 24
+        },
+        {
+          "name": "Dr. Deepa Nair",
+          "specialty": "Trauma Surgery",
+          "available": false,
+          "experience_years": 6
+        },
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Trauma Surgery",
+          "available": false,
+          "experience_years": 17
+        }
+      ],
+      "available_doctors": 2,
+      "eta_minutes": 7
+    },
+    {
+      "name": "Old Apollo Hospital",
+      "lat": 17.3985586,
+      "lng": 78.4814113,
+      "distance_km": 2.92,
+      "address": "Near 17.384, 78.458",
+      "phone": "+91-9697481103",
+      "emergency": true,
+      "beds": 244,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Lakshmi Iyer",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 6
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Emergency Medicine",
+          "available": true,
+          "experience_years": 17
+        },
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Neurosurgery",
+          "available": true,
+          "experience_years": 7
+        }
+      ],
+      "available_doctors": 3,
+      "eta_minutes": 8
+    },
+    {
+      "name": "Rahmat Ali hospital",
+      "lat": 17.3672265,
+      "lng": 78.4859878,
+      "distance_km": 3.5,
+      "address": "Near 17.384, 78.458",
+      "phone": "+91-7273157078",
+      "emergency": true,
+      "beds": 168,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Mohammed Khalid",
+          "specialty": "Neurosurgery",
+          "available": true,
+          "experience_years": 16
+        },
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Neurosurgery",
+          "available": true,
+          "experience_years": 19
+        },
+        {
+          "name": "Dr. Meena Rao",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 6
+        },
+        {
+          "name": "Dr. Kavitha Reddy",
+          "specialty": "General Surgery",
+          "available": true,
+          "experience_years": 22
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Orthopedic Surgery",
+          "available": false,
+          "experience_years": 5
+        },
+        {
+          "name": "Dr. Deepa Nair",
+          "specialty": "Neurosurgery",
+          "available": true,
+          "experience_years": 11
+        }
+      ],
+      "available_doctors": 5,
+      "eta_minutes": 10
+    }
+  ],
+  "police_stations": [
+    {
+      "name": "Koramangala Police Station",
+      "lat": 17.3643,
+      "lng": 78.4683,
+      "distance_km": 2.46,
+      "address": "Main Road, Sector 2, Hyderabad, Telangana, India",
+      "phone": "100 / +91-8056417740",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "HC Deepak Yadav",
+          "rank": "HC",
+          "badge": "KA7247",
+          "on_duty": false
+        },
+        {
+          "name": "ASI Pradeep Kumar",
+          "rank": "ASI",
+          "badge": "KA2286",
+          "on_duty": true
+        },
+        {
+          "name": "ASI Rajan Krishnan",
+          "rank": "ASI",
+          "badge": "KA5724",
+          "on_duty": false
+        },
+        {
+          "name": "SI Meera Pillai",
+          "rank": "SI",
+          "badge": "KA8730",
+          "on_duty": false
+        }
+      ],
+      "available_officers": 1,
+      "eta_minutes": 7,
+      "station_id": "PS984"
+    },
+    {
+      "name": "MG Road Police Station",
+      "lat": 17.3993,
+      "lng": 78.47829999999999,
+      "distance_km": 2.7,
+      "address": "Main Road, Sector 1, Hyderabad, Telangana, India",
+      "phone": "100 / +91-8101818252",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "ASI Vikram Singh",
+          "rank": "ASI",
+          "badge": "KA2673",
+          "on_duty": true
+        },
+        {
+          "name": "HC Suresh Babu",
+          "rank": "HC",
+          "badge": "KA4758",
+          "on_duty": false
+        },
+        {
+          "name": "SI Fatima Begum",
+          "rank": "SI",
+          "badge": "KA9247",
+          "on_duty": true
+        }
+      ],
+      "available_officers": 2,
+      "eta_minutes": 8,
+      "station_id": "PS932"
+    },
+    {
+      "name": "Whitefield Police Station",
+      "lat": 17.374299999999998,
+      "lng": 78.43329999999999,
+      "distance_km": 2.88,
+      "address": "Main Road, Sector 4, Hyderabad, Telangana, India",
+      "phone": "100 / +91-8017981502",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "ASI Vikram Singh",
+          "rank": "ASI",
+          "badge": "KA3349",
+          "on_duty": false
+        },
+        {
+          "name": "SI Meera Pillai",
+          "rank": "SI",
+          "badge": "KA6047",
+          "on_duty": true
+        },
+        {
+          "name": "SI Fatima Begum",
+          "rank": "SI",
+          "badge": "KA7503",
+          "on_duty": false
+        },
+        {
+          "name": "HC Anand Reddy",
+          "rank": "HC",
+          "badge": "KA4857",
+          "on_duty": true
+        },
+        {
+          "name": "ASI Rajan Krishnan",
+          "rank": "ASI",
+          "badge": "KA1725",
+          "on_duty": true
+        }
+      ],
+      "available_officers": 3,
+      "eta_minutes": 8,
+      "station_id": "PS960"
+    },
+    {
+      "name": "Indiranagar Police Station",
+      "lat": 17.409299999999998,
+      "lng": 78.4433,
+      "distance_km": 3.2,
+      "address": "Main Road, Sector 3, Hyderabad, Telangana, India",
+      "phone": "100 / +91-8829869997",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "ASI Rajan Krishnan",
+          "rank": "ASI",
+          "badge": "KA7041",
+          "on_duty": true
+        },
+        {
+          "name": "SI Fatima Begum",
+          "rank": "SI",
+          "badge": "KA8601",
+          "on_duty": true
+        },
+        {
+          "name": "ASI Pradeep Kumar",
+          "rank": "ASI",
+          "badge": "KA3460",
+          "on_duty": true
+        }
+      ],
+      "available_officers": 3,
+      "eta_minutes": 9,
+      "station_id": "PS850"
+    }
+  ],
+  "frame_path": "static/accidents/accident_20260417_145306.jpg",
+  "severity": "CRITICAL"
+}

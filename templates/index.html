@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FALCON — Smart Road Accident Detection System</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦅</text></svg>">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #030912;
+  --panel: #050f1e;
+  --panel2: #071422;
+  --border: #0d2a4a;
+  --accent: #00d4ff;
+  --accent2: #ff4d4d;
+  --accent3: #00ff88;
+  --text: #c8e6f5;
+  --text-dim: #4a7a9b;
+  --warning: #ffaa00;
+  --critical: #ff2244;
+  --glow: 0 0 20px rgba(0,212,255,0.3);
+  --glow-red: 0 0 20px rgba(255,34,68,0.5);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Grid scanlines effect */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.01) 2px, rgba(0,212,255,0.01) 4px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== TOP NAV ===== */
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: rgba(5,15,30,0.95);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 0 10px #00d4ff);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.logo-text {
+  font-family: 'Orbitron', monospace;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  background: linear-gradient(90deg, #00d4ff, #00ff88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-sub {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.nav-status {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.status-pill.online { border-color: var(--accent3); color: var(--accent3); background: rgba(0,255,136,0.05); }
+.status-pill.offline { border-color: #444; color: #666; background: rgba(68,68,68,0.05); }
+.status-pill.alert { border-color: var(--critical); color: var(--critical); background: rgba(255,34,68,0.1); animation: pulse-border 1s infinite; }
+
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+.status-pill.online .status-dot { background: var(--accent3); }
+.status-pill.offline .status-dot { background: #444; animation: none; }
+.status-pill.alert .status-dot { background: var(--critical); }
+
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+@keyframes pulse-border { 0%,100% { box-shadow: 0 0 0 0 rgba(255,34,68,0.5); } 50% { box-shadow: 0 0 0 4px rgba(255,34,68,0); } }
+
+.time-display {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+
+/* ===== MAIN LAYOUT ===== */
+.main-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr 320px;
+  grid-template-rows: auto;
+  gap: 1px;
+  padding: 1px;
+  min-height: calc(100vh - 65px);
+  background: var(--border);
+}
+
+/* ===== PANELS ===== */
+.panel {
+  background: var(--panel);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.5;
+}
+
+.panel-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title::before {
+  content: '';
+  width: 3px; height: 14px;
+  background: var(--accent);
+  display: block;
+  box-shadow: var(--glow);
+}
+
+/* ===== LEFT PANEL ===== */
+.left-panel { grid-row: 1 / 3; display: flex; flex-direction: column; gap: 1px; }
+
+/* ===== CENTER ===== */
+.center-panel { display: flex; flex-direction: column; gap: 1px; }
+
+/* ===== VIDEO PANEL ===== */
+.video-panel {
+  background: #000;
+  position: relative;
+  aspect-ratio: 16/9;
+  min-height: 360px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.video-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  color: var(--text-dim);
+}
+
+.video-placeholder-icon {
+  font-size: 64px;
+  filter: grayscale(0.8);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Corner brackets */
+.corner { position: absolute; width: 30px; height: 30px; border-color: var(--accent); border-style: solid; opacity: 0.7; }
+.corner-tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+.corner-tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
+.corner-bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
+.corner-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+.scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent3), transparent);
+  animation: scan 4s linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+.live-badge {
+  position: absolute;
+  top: 14px; left: 14px;
+  background: var(--critical);
+  color: white;
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  letter-spacing: 2px;
+  display: none;
+}
+
+.live-badge.active { display: block; animation: pulse-bg 1s infinite; }
+@keyframes pulse-bg { 0%,100% { background: var(--critical); } 50% { background: #cc0000; } }
+
+.accident-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,34,68,0.15);
+  display: none;
+  animation: flash 0.5s ease 3;
+}
+
+@keyframes flash { 0%,100% { opacity: 0; } 50% { opacity: 1; } }
+
+/* ===== STREAM CONNECT ===== */
+.stream-connect {
+  background: var(--panel2);
+  padding: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.input-field {
+  flex: 1;
+  min-width: 200px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus { border-color: var(--accent); box-shadow: var(--glow); }
+.input-field::placeholder { color: var(--text-dim); }
+
+.btn {
+  padding: 8px 18px;
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+}
+.btn-primary:hover { background: #00b8d9; box-shadow: var(--glow); }
+
+.btn-danger {
+  background: var(--critical);
+  color: #fff;
+}
+.btn-danger:hover { background: #cc0000; box-shadow: var(--glow-red); }
+
+.btn-warning {
+  background: var(--warning);
+  color: #000;
+}
+.btn-warning:hover { background: #cc8800; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+.btn-outline:hover { background: rgba(0,212,255,0.1); }
+
+.btn-green {
+  background: var(--accent3);
+  color: #000;
+}
+
+/* ===== STATS BAR ===== */
+.stats-bar {
+  background: var(--panel2);
+  padding: 10px 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 8px;
+}
+
+.stat-val {
+  font-family: 'Orbitron', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.stat-val.red { color: var(--critical); }
+.stat-val.green { color: var(--accent3); }
+.stat-val.yellow { color: var(--warning); }
+
+.stat-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* ===== ALERT PANEL ===== */
+.alert-panel {
+  background: rgba(255,34,68,0.05);
+  border: 1px solid var(--critical);
+  padding: 14px;
+  margin: 0;
+  display: none;
+  animation: slideIn 0.3s ease;
+}
+
+.alert-panel.visible { display: block; }
+
+@keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.alert-icon {
+  font-size: 32px;
+  animation: pulse 0.5s infinite;
+}
+
+.alert-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 16px;
+  color: var(--critical);
+  font-weight: 700;
+}
+
+.alert-subtitle {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* ===== HOSPITAL / POLICE CARDS ===== */
+.entity-card {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  padding: 12px;
+  margin-bottom: 10px;
+  position: relative;
+  transition: border-color 0.2s;
+}
+
+.entity-card:hover { border-color: var(--accent); }
+
+.entity-card.hospital { border-left: 3px solid var(--accent); }
+.entity-card.police { border-left: 3px solid var(--warning); }
+.entity-card.nearest { border-left: 3px solid var(--accent3); }
+
+.entity-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.entity-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.meta-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+.badge-dist { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+.badge-eta { background: rgba(255,170,0,0.1); color: var(--warning); border: 1px solid rgba(255,170,0,0.3); }
+.badge-available { background: rgba(0,255,136,0.1); color: var(--accent3); border: 1px solid rgba(0,255,136,0.3); }
+.badge-emergency { background: rgba(255,34,68,0.1); color: var(--critical); border: 1px solid rgba(255,34,68,0.3); }
+.badge-beds { background: rgba(120,120,200,0.1); color: #aab; border: 1px solid rgba(120,120,200,0.3); }
+
+.entity-phone {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--accent3);
+  margin-top: 4px;
+}
+
+.entity-addr {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doctors-list {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.doctor-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  font-size: 11px;
+}
+
+.doc-status {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.doc-available { background: var(--accent3); box-shadow: 0 0 6px rgba(0,255,136,0.8); }
+.doc-busy { background: #666; }
+
+.doc-name { color: var(--text); font-weight: 600; }
+.doc-spec { color: var(--text-dim); font-style: italic; }
+
+/* ===== LOGS ===== */
+.log-container {
+  height: 200px;
+  overflow-y: auto;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+}
+
+.log-container::-webkit-scrollbar { width: 4px; }
+.log-container::-webkit-scrollbar-track { background: #000; }
+.log-container::-webkit-scrollbar-thumb { background: var(--accent); }
+
+.log-entry {
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(13,42,74,0.4);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.log-time { color: var(--text-dim); flex-shrink: 0; }
+.log-msg { color: var(--text); }
+.log-msg.info { color: var(--accent); }
+.log-msg.warn { color: var(--warning); }
+.log-msg.error { color: var(--critical); }
+.log-msg.success { color: var(--accent3); }
+
+/* ===== MAP ===== */
+.map-placeholder {
+  height: 200px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-iframe {
+  width: 100%; height: 100%; border: none; display: none;
+}
+
+.map-grid {
+  position: absolute; inset: 0;
+  background-image: 
+    linear-gradient(rgba(0,212,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.tab {
+  padding: 8px 16px;
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  color: var(--text-dim);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab:hover { color: var(--text); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== MAP EMBED ===== */
+#mapContainer {
+  height: 220px;
+  background: #000;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ===== SCROLLABLE AREAS ===== */
+.scrollable {
+  overflow-y: auto;
+  max-height: calc(100vh - 180px);
+}
+
+.scrollable::-webkit-scrollbar { width: 3px; }
+.scrollable::-webkit-scrollbar-track { background: transparent; }
+.scrollable::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* ===== NOTIFICATION ITEM ===== */
+.notif-item {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-left: 3px solid;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.notif-item.hospital { border-left-color: var(--accent); }
+.notif-item.police { border-left-color: var(--warning); }
+.notif-item.whatsapp { border-left-color: #25d366; }
+.notif-item.report { border-left-color: #a0a0f0; }
+
+.notif-icon { font-size: 16px; }
+.notif-title { font-weight: 600; color: var(--text); }
+.notif-detail { color: var(--text-dim); font-family: 'Share Tech Mono', monospace; font-size: 10px; }
+
+/* ===== ACCORDION ===== */
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.accordion-header:hover { border-color: var(--accent); }
+.accordion-body { padding: 8px; background: rgba(0,0,0,0.2); margin-bottom: 6px; display: none; }
+.accordion-body.open { display: block; }
+
+/* ===== SEVERITY BADGE ===== */
+.severity-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.sev-critical { background: var(--critical); color: white; animation: pulse-bg 1s infinite; }
+.sev-high { background: #cc4400; color: white; }
+.sev-moderate { background: var(--warning); color: black; }
+
+/* ===== CONFIG PANEL ===== */
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.config-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.config-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* ===== TOGGLE ===== */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.toggle-switch {
+  width: 36px; height: 20px;
+  background: var(--border);
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  background: #666;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.toggle input:checked + .toggle-switch { background: var(--accent3); }
+.toggle input:checked + .toggle-switch::after { transform: translateX(16px); background: white; }
+.toggle input { display: none; }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 4px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  transition: width 0.5s ease;
+}
+
+/* ===== ACCIDENT HISTORY ===== */
+.hist-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.hist-item:hover { background: rgba(0,212,255,0.05); }
+
+.hist-thumb {
+  width: 60px; height: 40px;
+  background: #111;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.hist-info { flex: 1; }
+.hist-time { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); }
+.hist-loc { font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--glow);
+  animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Orbitron', monospace;
+  font-size: 14px;
+  color: var(--accent);
+}
+
+.modal-close { cursor: pointer; font-size: 20px; color: var(--text-dim); }
+.modal-close:hover { color: var(--critical); }
+.modal-body { padding: 20px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1100px) {
+  .main-grid { grid-template-columns: 280px 1fr; }
+  .right-panel { display: none; }
+}
+
+@media (max-width: 768px) {
+  .main-grid { grid-template-columns: 1fr; }
+  .left-panel { display: none; }
+}
+
+/* ===== ANIMATIONS ===== */
+.pulse-red { animation: pulse-red 1s infinite; }
+@keyframes pulse-red { 0%,100% { color: var(--critical); } 50% { color: #ff8888; } }
+
+.fade-in { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Glitch effect for FALCON logo */
+.glitch {
+  position: relative;
+}
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  background: linear-gradient(90deg, #00d4ff, #00ff88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.glitch::before { animation: glitch1 3s infinite; clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%); }
+.glitch::after { animation: glitch2 3s infinite; clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%); }
+
+@keyframes glitch1 {
+  0%,95%,100% { transform: translate(0); }
+  96% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+  98% { transform: translate(2px, -1px); }
+}
+@keyframes glitch2 {
+  0%,95%,100% { transform: translate(0); }
+  97% { transform: translate(2px, 2px); filter: hue-rotate(-90deg); }
+  99% { transform: translate(-2px, -1px); }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="logo">
+    <span class="logo-icon">🦅</span>
+    <div>
+      <div class="logo-text glitch" data-text="FALCON">FALCON</div>
+      <div class="logo-sub">Fatality Alert & Crash Locator Over Networks</div>
+    </div>
+  </div>
+  <div class="nav-status">
+    <div class="status-pill offline" id="streamStatus">
+      <span class="status-dot"></span>
+      <span>STREAM OFFLINE</span>
+    </div>
+    <div class="status-pill online" id="systemStatus">
+      <span class="status-dot"></span>
+      <span>SYSTEM ONLINE</span>
+    </div>
+    <div class="status-pill offline" id="detectionStatus">
+      <span class="status-dot"></span>
+      <span>DETECTION IDLE</span>
+    </div>
+    <div class="time-display" id="clockDisplay"></div>
+  </div>
+</nav>
+
+<!-- MAIN GRID -->
+<div class="main-grid">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    
+    <!-- Camera Connect -->
+    <div class="panel">
+      <div class="panel-title">📡 Camera Connection</div>
+      <div style="margin-bottom:10px;font-size:12px;color:var(--text-dim)">Connect IP Webcam or RTSP stream</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input type="text" class="input-field" id="streamUrl" placeholder="http://192.168.1.100:8080/video" />
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="connectStream()">⚡ CONNECT</button>
+          <button class="btn btn-danger" onclick="disconnectStream()">✕ DISCONNECT</button>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);font-family:'Share Tech Mono',monospace">
+          Formats: IP Webcam App, MJPEG, RTSP
+        </div>
+        <div id="streamMsg" style="font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--warning);min-height:18px"></div>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="panel">
+      <div class="panel-title">📍 Location</div>
+      <div id="locationDisplay" style="font-size:12px;color:var(--text-dim)">Detecting location...</div>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+        <input type="number" id="manualLat" class="input-field" style="flex:1" placeholder="Latitude" step="0.0001">
+        <input type="number" id="manualLng" class="input-field" style="flex:1" placeholder="Longitude" step="0.0001">
+      </div>
+      <button class="btn btn-outline" style="margin-top:8px;width:100%" onclick="setManualLocation()">SET LOCATION</button>
+      <div id="mapContainer" style="margin-top:10px">
+        <div class="map-grid"></div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px;font-family:'Share Tech Mono',monospace" id="mapPlaceholder">
+          📍 Detecting your location...
+        </div>
+        <iframe id="mapFrame" class="map-iframe"></iframe>
+      </div>
+    </div>
+
+    <!-- Simulation -->
+    <div class="panel">
+      <div class="panel-title">🎮 Demo / Simulate</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-bottom:10px">Test system without live stream</div>
+      <button class="btn btn-warning" style="width:100%;margin-bottom:8px" onclick="simulateAccident()">
+        🚨 SIMULATE ACCIDENT
+      </button>
+      <button class="btn btn-outline" style="width:100%;font-size:10px" onclick="clearAccidents()">
+        CLEAR ALL ALERTS
+      </button>
+    </div>
+
+    <!-- Settings -->
+    <div class="panel">
+      <div class="panel-title">⚙️ Settings</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <label class="toggle">
+          <input type="checkbox" id="toggleDetection" checked onchange="toggleDetection()">
+          <div class="toggle-switch"></div>
+          <span style="font-size:12px">AI Detection Active</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="toggleNotify" checked>
+          <div class="toggle-switch"></div>
+          <span style="font-size:12px">Auto Notifications</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="toggleWhatsApp">
+          <div class="toggle-switch"></div>
+          <span style="font-size:12px">WhatsApp Alerts</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="toggleReport" checked>
+          <div class="toggle-switch"></div>
+          <span style="font-size:12px">Auto Generate Report</span>
+        </label>
+      </div>
+      <div style="margin-top:12px">
+        <div class="config-label">WhatsApp Numbers (comma separated)</div>
+        <input type="text" class="input-field" id="waNumbers" placeholder="+91XXXXXXXXXX,+91XXXXXXXXXX" style="margin-top:4px;width:100%">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CENTER PANEL -->
+  <div class="center-panel">
+    
+    <!-- Video Feed -->
+    <div class="video-panel" id="videoPanel">
+      <img id="videoFeed" class="video-feed" alt="Live Feed">
+      <div class="video-placeholder" id="videoPlaceholder">
+        <span class="video-placeholder-icon">📹</span>
+        <div style="text-align:center">
+          <div style="font-family:'Orbitron',monospace;font-size:16px;color:var(--accent)">NO FEED</div>
+          <div style="font-size:12px;margin-top:6px">Connect IP webcam or paste stream URL</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Install "IP Webcam" app on Android</div>
+        </div>
+      </div>
+      <div class="video-overlay">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+        <div class="scan-line" id="scanLine"></div>
+        <div class="live-badge" id="liveBadge">● LIVE</div>
+        <div class="accident-flash" id="accidentFlash"></div>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-val red" id="statAccidents">0</div>
+        <div class="stat-label">Accidents</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val green" id="statHospitals">0</div>
+        <div class="stat-label">Hospitals Found</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val yellow" id="statPolice">0</div>
+        <div class="stat-label">Police Notified</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val" id="statAlerts">0</div>
+        <div class="stat-label">Alerts Sent</div>
+      </div>
+    </div>
+
+    <!-- Accident Alert Panel -->
+    <div class="alert-panel" id="alertPanel">
+      <div class="alert-header">
+        <span class="alert-icon">🚨</span>
+        <div>
+          <div class="alert-title">ACCIDENT DETECTED</div>
+          <div class="alert-subtitle" id="alertSubtitle">Analyzing scene...</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn btn-outline" id="reportBtn" onclick="downloadReport()" style="font-size:10px">📋 REPORT</button>
+          <button class="btn btn-green" onclick="openApproveModal()" style="font-size:10px">✅ APPROVE</button>
+          <button class="btn btn-danger" onclick="dismissAlert()" style="font-size:10px">DISMISS</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div class="config-label">Location</div>
+          <div id="alertLocation" style="font-size:13px;margin-top:2px;color:var(--text)">—</div>
+        </div>
+        <div>
+          <div class="config-label">Severity / Confidence</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+            <span class="severity-badge sev-high" id="alertSeverity">HIGH</span>
+            <span id="alertConfidence" style="font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent)">—</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="progress-bar"><div class="progress-fill" id="alertProgress" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;margin-top:4px">
+          <span>DETECTION</span><span>LOCATION</span><span>HOSPITALS</span><span>POLICE</span><span>ALERTS</span>
+        </div>
+      </div>
+      <div id="alertAccidentId" style="font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--text-dim);margin-top:8px"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="panel" style="flex:1">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('hospitals', this)">🏥 HOSPITALS</div>
+        <div class="tab" onclick="switchTab('police', this)">🚔 POLICE</div>
+        <div class="tab" onclick="switchTab('notifications', this)">📤 NOTIFICATIONS</div>
+        <div class="tab" onclick="switchTab('history', this)">📜 HISTORY</div>
+      </div>
+
+      <!-- Hospitals Tab -->
+      <div id="tab-hospitals" class="tab-content active scrollable">
+        <div id="hospitalsContainer">
+          <div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px">
+            <div style="font-size:40px;margin-bottom:10px">🏥</div>
+            Hospitals will appear here after accident detection or manual search
+          </div>
+        </div>
+        <button class="btn btn-outline" style="width:100%;margin-top:8px;font-size:10px" onclick="findNearbyHospitals()">
+          🔍 FIND NEARBY HOSPITALS NOW
+        </button>
+      </div>
+
+      <!-- Police Tab -->
+      <div id="tab-police" class="tab-content scrollable">
+        <div id="policeContainer">
+          <div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px">
+            <div style="font-size:40px;margin-bottom:10px">🚔</div>
+            Police stations will appear here after accident detection
+          </div>
+        </div>
+        <button class="btn btn-outline" style="width:100%;margin-top:8px;font-size:10px" onclick="findNearbyPolice()">
+          🔍 FIND NEARBY POLICE NOW
+        </button>
+      </div>
+
+      <!-- Notifications Tab -->
+      <div id="tab-notifications" class="tab-content scrollable">
+        <div id="notificationsContainer">
+          <div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px">
+            No notifications sent yet
+          </div>
+        </div>
+      </div>
+
+      <!-- History Tab -->
+      <div id="tab-history" class="tab-content scrollable">
+        <div id="historyContainer">
+          <div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px">
+            No accidents recorded yet
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel right-panel" style="grid-row:1/3">
+    
+    <!-- System Log -->
+    <div class="panel-title">📟 System Log</div>
+    <div class="log-container" id="systemLog">
+      <div class="log-entry"><span class="log-time">00:00:00</span><span class="log-msg info">FALCON v2.0 initialized</span></div>
+      <div class="log-entry"><span class="log-time">—</span><span class="log-msg success">All modules loaded</span></div>
+    </div>
+
+    <div style="margin-top:16px" class="panel-title">📊 Detection Metrics</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span>Motion Score</span><span id="motionVal" style="font-family:'Share Tech Mono',monospace">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="motionBar" style="width:0%;background:linear-gradient(90deg,var(--accent),var(--accent3))"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span>Foreground Activity</span><span id="fgVal" style="font-family:'Share Tech Mono',monospace">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="fgBar" style="width:0%;background:linear-gradient(90deg,var(--warning),#ff6600)"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span>Edge Change</span><span id="edgeVal" style="font-family:'Share Tech Mono',monospace">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="edgeBar" style="width:0%;background:linear-gradient(90deg,var(--critical),#ff8800)"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span>Accident Confidence</span><span id="confVal" style="font-family:'Share Tech Mono',monospace">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="confBar" style="width:0%;background:linear-gradient(90deg,#ff4400,var(--critical))"></div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px" class="panel-title">🗺️ Incident Map</div>
+    <div id="incidentMapContainer" style="height:180px;background:#000;border:1px solid var(--border);position:relative;overflow:hidden">
+      <div class="map-grid"></div>
+      <div id="incidentMapMsg" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:11px;font-family:'Share Tech Mono',monospace;text-align:center;padding:10px">
+        Incident map loads<br>after detection
+      </div>
+      <iframe id="incidentMapFrame" style="width:100%;height:100%;border:none;display:none"></iframe>
+    </div>
+
+    <div style="margin-top:16px" class="panel-title">⚡ Quick Actions</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <button class="btn btn-outline" style="width:100%;font-size:10px" onclick="openWhatsAppConfig()">📱 Configure WhatsApp</button>
+      <button class="btn btn-outline" style="width:100%;font-size:10px" onclick="testNotifications()">🔔 Test Notifications</button>
+      <button class="btn btn-outline" style="width:100%;font-size:10px" onclick="exportLogs()">📥 Export Logs</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ACCIDENT MODAL -->
+<div class="modal-overlay" id="accidentModal">
+  <div class="modal">
+    <div class="modal-header">
+      🚨 ACCIDENT ALERT — FULL DETAILS
+      <span class="modal-close" onclick="closeModal('accidentModal')">✕</span>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- WHATSAPP CONFIG MODAL -->
+<div class="modal-overlay" id="waModal">
+  <div class="modal">
+    <div class="modal-header">
+      📱 WhatsApp Configuration
+      <span class="modal-close" onclick="closeModal('waModal')">✕</span>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:16px;font-size:12px;color:var(--text-dim)">
+        Configure Twilio or Meta WhatsApp Business API to send accident alerts via WhatsApp.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <div class="config-label">Alert Numbers (comma separated)</div>
+          <input type="text" class="input-field" id="waNumbersModal" placeholder="+91XXXXXXXXXX,+91XXXXXXXXXX" style="width:100%;margin-top:4px">
+        </div>
+        <div style="background:rgba(0,0,0,0.4);padding:12px;border:1px solid var(--border);font-size:11px">
+          <div style="color:var(--accent);font-weight:600;margin-bottom:8px">Setup Instructions:</div>
+          <div style="color:var(--text-dim);line-height:1.7">
+            1. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN in .env<br>
+            2. Set TWILIO_WHATSAPP_FROM (sandbox: whatsapp:+14155238886)<br>
+            3. Set WHATSAPP_ALERT_NUMBERS with target numbers<br>
+            4. For Meta API: set META_WHATSAPP_TOKEN & META_PHONE_NUMBER_ID<br>
+            5. Numbers must be in format: +91XXXXXXXXXX
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="sendTestWhatsApp()">📱 SEND TEST MESSAGE</button>
+        <div id="waTestResult" style="font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--accent3)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APPROVE REPORT MODAL -->
+<div class="modal-overlay" id="approveModal">
+  <div class="modal">
+    <div class="modal-header">
+      ✅ Approve Accident Report — Police Clearance
+      <span class="modal-close" onclick="closeModal('approveModal')">✕</span>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;font-size:12px;color:var(--text-dim)">
+        Approving this report will authorise the victim to seek immediate medical treatment
+        at any government hospital. The approval stamp will appear on the police report.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <div class="config-label">Approving Officer Name</div>
+          <input type="text" class="input-field" id="approveOfficerName" placeholder="e.g. SI Ramesh Kumar" style="width:100%;margin-top:4px">
+        </div>
+        <div>
+          <div class="config-label">Badge Number</div>
+          <input type="text" class="input-field" id="approveBadge" placeholder="e.g. KA4521" style="width:100%;margin-top:4px">
+        </div>
+        <div>
+          <div class="config-label">Police Station Name</div>
+          <input type="text" class="input-field" id="approveStation" placeholder="e.g. MG Road Police Station" style="width:100%;margin-top:4px">
+        </div>
+        <div>
+          <div class="config-label">Remarks / Clearance Note</div>
+          <input type="text" class="input-field" id="approveRemarks" placeholder="Cleared for hospital treatment. Proceed immediately." style="width:100%;margin-top:4px">
+        </div>
+        <button class="btn btn-green" onclick="submitApproval()" style="margin-top:6px">✅ APPROVE &amp; STAMP REPORT</button>
+        <div id="approveResult" style="font-size:12px;font-family:'Share Tech Mono',monospace;color:var(--accent3);min-height:18px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+const socket = io();
+let accidentCount = 0;
+let alertsCount = 0;
+let currentAccident = null;
+let currentLat = 12.9716, currentLng = 77.5946;
+let notificationHistory = [];
+
+// ===== CLOCK =====
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clockDisplay').textContent =
+    now.toLocaleTimeString('en-US', { hour12: false }) + ' IST';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ===== LOCATION =====
+function showCurrentLocationMap(lat, lng) {
+  document.getElementById('mapFrame').src = `https://maps.google.com/maps?q=${lat},${lng}&z=14&output=embed`;
+  document.getElementById('mapFrame').style.display = 'block';
+  document.getElementById('mapPlaceholder').style.display = 'none';
+}
+
+async function pushLocationToBackend(lat, lng) {
+  // Keep backend in sync with real GPS so accident detection uses correct location
+  try {
+    await fetch('/api/set_location', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({lat, lng})
+    });
+  } catch(e) {}
+}
+
+function detectLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      currentLat = pos.coords.latitude;
+      currentLng = pos.coords.longitude;
+      document.getElementById('manualLat').value = currentLat.toFixed(4);
+      document.getElementById('manualLng').value = currentLng.toFixed(4);
+      showCurrentLocationMap(currentLat, currentLng);
+      pushLocationToBackend(currentLat, currentLng);
+      fetchLocationName(currentLat, currentLng);
+    }, () => {
+      fetchLocationFromIP();
+    });
+  } else {
+    fetchLocationFromIP();
+  }
+}
+
+async function fetchLocationFromIP() {
+  try {
+    const resp = await fetch('/api/get_location', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({}) });
+    const data = await resp.json();
+    if (data.lat) {
+      currentLat = data.lat;
+      currentLng = data.lng;
+      document.getElementById('locationDisplay').textContent = `📍 ${data.address}`;
+      document.getElementById('manualLat').value = currentLat.toFixed(4);
+      document.getElementById('manualLng').value = currentLng.toFixed(4);
+      showCurrentLocationMap(currentLat, currentLng);
+      pushLocationToBackend(currentLat, currentLng);
+      addLog(`Location: ${data.city}, ${data.region}`, 'info');
+    }
+  } catch(e) {
+    document.getElementById('locationDisplay').textContent = '📍 Bengaluru, Karnataka (default)';
+    showCurrentLocationMap(12.9716, 77.5946);
+    pushLocationToBackend(12.9716, 77.5946);
+  }
+}
+
+async function fetchLocationName(lat, lng) {
+  try {
+    const resp = await fetch('/api/get_location', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({lat, lng})
+    });
+    const data = await resp.json();
+    document.getElementById('locationDisplay').textContent = `📍 ${data.address}`;
+    addLog(`Location: ${data.address.substring(0,50)}`, 'info');
+  } catch(e) {}
+}
+
+function setManualLocation() {
+  currentLat = parseFloat(document.getElementById('manualLat').value) || currentLat;
+  currentLng = parseFloat(document.getElementById('manualLng').value) || currentLng;
+  showCurrentLocationMap(currentLat, currentLng);
+  pushLocationToBackend(currentLat, currentLng);
+  fetchLocationName(currentLat, currentLng);
+  addLog(`Manual location set: ${currentLat.toFixed(4)}, ${currentLng.toFixed(4)}`, 'success');
+}
+
+// ===== STREAM =====
+async function connectStream() {
+  const url = document.getElementById('streamUrl').value.trim();
+  if (!url) {
+    document.getElementById('streamMsg').textContent = '⚠ Enter stream URL';
+    return;
+  }
+  document.getElementById('streamMsg').textContent = '⏳ Connecting...';
+  addLog(`Connecting to: ${url}`, 'info');
+  try {
+    const resp = await fetch('/api/connect_stream', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({url})
+    });
+    const data = await resp.json();
+    if (data.success) {
+      document.getElementById('streamStatus').className = 'status-pill online';
+      document.getElementById('streamStatus').querySelector('span:last-child').textContent = 'STREAM LIVE';
+      document.getElementById('detectionStatus').className = 'status-pill online';
+      document.getElementById('detectionStatus').querySelector('span:last-child').textContent = 'DETECTING';
+      // Set src dynamically with cache-buster so browser makes a fresh MJPEG request
+      const feed = document.getElementById('videoFeed');
+      feed.src = '/video_feed?t=' + Date.now();
+      feed.style.display = 'block';
+      document.getElementById('videoPlaceholder').style.display = 'none';
+      document.getElementById('liveBadge').classList.add('active');
+      document.getElementById('streamMsg').textContent = '✅ Connected!';
+      addLog('Stream connected successfully', 'success');
+    } else {
+      document.getElementById('streamMsg').textContent = `❌ ${data.message}`;
+      addLog(`Stream failed: ${data.message}`, 'error');
+    }
+  } catch(e) {
+    document.getElementById('streamMsg').textContent = `❌ Error: ${e.message}`;
+  }
+}
+
+async function disconnectStream() {
+  await fetch('/api/disconnect_stream', { method: 'POST' });
+  document.getElementById('streamStatus').className = 'status-pill offline';
+  document.getElementById('streamStatus').querySelector('span:last-child').textContent = 'STREAM OFFLINE';
+  document.getElementById('detectionStatus').className = 'status-pill offline';
+  document.getElementById('detectionStatus').querySelector('span:last-child').textContent = 'DETECTION IDLE';
+  const feed = document.getElementById('videoFeed');
+  feed.src = '';
+  feed.style.display = 'none';
+  document.getElementById('videoPlaceholder').style.display = 'flex';
+  document.getElementById('liveBadge').classList.remove('active');
+  document.getElementById('streamMsg').textContent = 'Disconnected';
+  addLog('Stream disconnected', 'warn');
+}
+
+// ===== ACCIDENT EVENT =====
+socket.on('accident_detected', data => {
+  handleAccidentEvent(data);
+});
+
+socket.on('report_approved', data => {
+  addLog(`✅ Report ${data.id} has been APPROVED by police — victim cleared for treatment`, 'success');
+  if (currentAccident && currentAccident.id === data.id) {
+    currentAccident = data;
+  }
+});
+
+function handleAccidentEvent(data) {
+  currentAccident = data;
+  accidentCount++;
+  alertsCount += (data.hospitals?.length || 0) + (data.police_stations?.length || 0);
+
+  // Update stats
+  document.getElementById('statAccidents').textContent = accidentCount;
+  document.getElementById('statHospitals').textContent = data.hospitals?.length || 0;
+  document.getElementById('statPolice').textContent = data.police_stations?.length || 0;
+  document.getElementById('statAlerts').textContent = alertsCount;
+
+  // Flash
+  const flash = document.getElementById('accidentFlash');
+  flash.style.display = 'block';
+  setTimeout(() => flash.style.display = 'none', 1500);
+
+  // Alert panel
+  const panel = document.getElementById('alertPanel');
+  panel.classList.add('visible');
+  document.getElementById('alertSubtitle').textContent = `${data.timestamp_readable} — ID: ${data.id}`;
+  document.getElementById('alertLocation').textContent = data.location?.address || '—';
+  document.getElementById('alertAccidentId').textContent = `Incident ID: ${data.id}`;
+
+  const sev = data.severity || 'HIGH';
+  const sevEl = document.getElementById('alertSeverity');
+  sevEl.className = `severity-badge sev-${sev.toLowerCase()}`;
+  sevEl.textContent = sev;
+  document.getElementById('alertConfidence').textContent = `${Math.round(data.confidence * 100)}%`;
+
+  // Progress animation
+  animateProgress();
+
+  // Update map
+  updateIncidentMap(data.location.lat, data.location.lng);
+
+  // Render hospitals / police
+  renderHospitals(data.hospitals || []);
+  renderPolice(data.police_stations || []);
+  addNotifications(data);
+  addToHistory(data);
+
+  // Switch to hospitals tab
+  switchTab('hospitals', document.querySelector('.tab'));
+
+  // Log
+  addLog(`🚨 ACCIDENT DETECTED - ${sev} - ${Math.round(data.confidence*100)}% confidence`, 'error');
+  addLog(`📍 Location: ${data.location.address?.substring(0,60)}`, 'warn');
+  addLog(`🏥 ${data.hospitals?.length || 0} hospitals found, ${data.police_stations?.length || 0} police stations`, 'info');
+  addLog(`📤 Notifications dispatched`, 'success');
+
+  // Sound alert (if browser supports)
+  playAlertSound();
+}
+
+function animateProgress() {
+  const bar = document.getElementById('alertProgress');
+  let w = 0;
+  const steps = [20, 40, 60, 80, 100];
+  steps.forEach((s, i) => setTimeout(() => { bar.style.width = s + '%'; }, i * 400));
+}
+
+function updateIncidentMap(lat, lng) {
+  const iframe = document.getElementById('incidentMapFrame');
+  iframe.src = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+  iframe.style.display = 'block';
+  document.getElementById('incidentMapMsg').style.display = 'none';
+  // Location panel map too
+  document.getElementById('mapFrame').src = `https://maps.google.com/maps?q=${lat},${lng}&z=14&output=embed`;
+  document.getElementById('mapFrame').style.display = 'block';
+  document.getElementById('mapPlaceholder').style.display = 'none';
+}
+
+// ===== HOSPITALS =====
+function renderHospitals(hospitals) {
+  const c = document.getElementById('hospitalsContainer');
+  if (!hospitals.length) { c.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim)">No hospitals found nearby</div>'; return; }
+  c.innerHTML = hospitals.map((h, i) => `
+    <div class="entity-card hospital ${i===0?'nearest':''} fade-in">
+      ${i===0 ? '<div style="font-size:10px;color:var(--accent3);font-family:\'Share Tech Mono\',monospace;margin-bottom:6px">⭐ NEAREST</div>' : ''}
+      <div class="entity-name">🏥 ${h.name}</div>
+      <div class="entity-meta">
+        <span class="meta-badge badge-dist">📍 ${h.distance_km} km</span>
+        <span class="meta-badge badge-eta">⏱ ${h.eta_minutes} min ETA</span>
+        ${h.emergency ? '<span class="meta-badge badge-emergency">🔴 24/7 EMERGENCY</span>' : ''}
+        <span class="meta-badge badge-beds">🛏 ${h.beds} beds</span>
+        <span class="meta-badge badge-available">👨‍⚕️ ${h.available_doctors} doctors available</span>
+      </div>
+      <div class="entity-addr">📌 ${h.address}</div>
+      <div class="entity-phone">📞 ${h.phone}</div>
+      ${h.doctors?.length ? `
+      <div class="doctors-list">
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px;font-family:'Share Tech Mono',monospace">DOCTORS ON DUTY</div>
+        ${h.doctors.slice(0,4).map(d => `
+          <div class="doctor-item">
+            <div class="doc-status ${d.available ? 'doc-available' : 'doc-busy'}"></div>
+            <span class="doc-name">${d.name}</span>
+            <span class="doc-spec">— ${d.specialty}</span>
+            ${d.available ? '<span style="color:var(--accent3);font-size:10px;margin-left:auto">Available</span>' : '<span style="color:#666;font-size:10px;margin-left:auto">Busy</span>'}
+          </div>
+        `).join('')}
+      </div>` : ''}
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn btn-outline" style="font-size:9px;padding:4px 10px" onclick="callHospital('${h.phone}')">📞 CALL</button>
+        <button class="btn btn-outline" style="font-size:9px;padding:4px 10px" onclick="openMap(${h.lat},${h.lng})">🗺 MAP</button>
+        <button class="btn btn-warning" style="font-size:9px;padding:4px 10px" onclick="notifyHospital('${h.name}')">📤 NOTIFY</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== POLICE =====
+function renderPolice(stations) {
+  const c = document.getElementById('policeContainer');
+  if (!stations.length) { c.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim)">No police stations found</div>'; return; }
+  c.innerHTML = stations.map((ps, i) => `
+    <div class="entity-card police ${i===0?'nearest':''} fade-in">
+      ${i===0 ? '<div style="font-size:10px;color:var(--accent3);font-family:\'Share Tech Mono\',monospace;margin-bottom:6px">⭐ NEAREST</div>' : ''}
+      <div class="entity-name">🚔 ${ps.name}</div>
+      <div class="entity-meta">
+        <span class="meta-badge badge-dist">📍 ${ps.distance_km} km</span>
+        <span class="meta-badge badge-eta">⏱ ${ps.eta_minutes} min ETA</span>
+        <span class="meta-badge badge-available">👮 ${ps.available_officers} officers on duty</span>
+      </div>
+      <div class="entity-addr">📌 ${ps.address}</div>
+      <div class="entity-phone">📞 ${ps.phone}</div>
+      ${ps.officers?.length ? `
+      <div class="doctors-list">
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px;font-family:'Share Tech Mono',monospace">OFFICERS ON DUTY</div>
+        ${ps.officers.filter(o=>o.on_duty).slice(0,3).map(o => `
+          <div class="doctor-item">
+            <div class="doc-status doc-available"></div>
+            <span class="doc-name">${o.name}</span>
+            <span class="doc-spec">— Badge: ${o.badge}</span>
+          </div>
+        `).join('')}
+      </div>` : ''}
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-outline" style="font-size:9px;padding:4px 10px" onclick="callStation('${ps.phone}')">📞 CALL</button>
+        <button class="btn btn-outline" style="font-size:9px;padding:4px 10px" onclick="openMap(${ps.lat},${ps.lng})">🗺 MAP</button>
+        <button class="btn btn-warning" style="font-size:9px;padding:4px 10px" onclick="downloadPoliceReport()">📋 REPORT</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== NOTIFICATIONS =====
+function addNotifications(data) {
+  const notifications = [];
+  data.hospitals?.slice(0,3).forEach(h => {
+    notifications.push({
+      type: 'hospital', icon: '🏥',
+      title: `Alert sent to ${h.name}`,
+      detail: `SMS & Email dispatched • ${data.timestamp_readable}`
+    });
+  });
+  data.police_stations?.slice(0,2).forEach(ps => {
+    notifications.push({
+      type: 'police', icon: '🚔',
+      title: `Alert sent to ${ps.name}`,
+      detail: `SMS dispatched • ${data.timestamp_readable}`
+    });
+  });
+  notifications.push({
+    type: 'whatsapp', icon: '📱',
+    title: 'WhatsApp alerts dispatched',
+    detail: `Sent to configured numbers • ${data.timestamp_readable}`
+  });
+  notifications.push({
+    type: 'report', icon: '📋',
+    title: 'Police report generated',
+    detail: `Report ID: ${data.id} • ${data.timestamp_readable}`
+  });
+
+  notificationHistory = [...notifications, ...notificationHistory].slice(0, 50);
+  const c = document.getElementById('notificationsContainer');
+  c.innerHTML = notificationHistory.map(n => `
+    <div class="notif-item ${n.type} fade-in">
+      <div style="display:flex;gap:10px;align-items:center">
+        <span class="notif-icon">${n.icon}</span>
+        <div>
+          <div class="notif-title">${n.title}</div>
+          <div class="notif-detail">${n.detail}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== HISTORY =====
+function addToHistory(data) {
+  const c = document.getElementById('historyContainer');
+  const existing = c.innerHTML.includes('No accidents') ? '' : c.innerHTML;
+  const imgSrc = data.frame_b64 ? `data:image/jpeg;base64,${data.frame_b64}` : '';
+  const newItem = `
+    <div class="hist-item fade-in" onclick='showAccidentDetail(${JSON.stringify({...data, frame_b64: data.frame_b64?.substring(0,20)})})'>
+      ${imgSrc ? `<img class="hist-thumb" src="${imgSrc}">` : '<div class="hist-thumb" style="background:#111;display:flex;align-items:center;justify-content:center;font-size:20px">🚨</div>'}
+      <div class="hist-info">
+        <div class="hist-time">${data.timestamp_readable}</div>
+        <div class="hist-loc">📍 ${data.location?.address?.substring(0,50) || '—'}...</div>
+        <div style="margin-top:3px"><span class="severity-badge sev-${(data.severity||'HIGH').toLowerCase()}" style="font-size:9px;padding:1px 6px">${data.severity||'HIGH'}</span></div>
+      </div>
+    </div>
+  `;
+  c.innerHTML = newItem + existing;
+}
+
+// ===== SIMULATE =====
+async function simulateAccident() {
+  addLog('⚡ Simulating accident...', 'warn');
+  try {
+    const resp = await fetch('/api/simulate_accident', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({lat: currentLat, lng: currentLng})
+    });
+    const data = await resp.json();
+    if (data.success) handleAccidentEvent(data.data);
+  } catch(e) {
+    addLog(`Simulation error: ${e.message}`, 'error');
+  }
+}
+
+// ===== FIND NEARBY =====
+async function findNearbyHospitals() {
+  addLog('🔍 Searching nearby hospitals...', 'info');
+  try {
+    const resp = await fetch('/api/nearby_hospitals', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({lat: currentLat, lng: currentLng, address: ''})
+    });
+    const data = await resp.json();
+    renderHospitals(data);
+    document.getElementById('statHospitals').textContent = data.length;
+    addLog(`Found ${data.length} hospitals nearby`, 'success');
+  } catch(e) { addLog(`Hospital search error: ${e.message}`, 'error'); }
+}
+
+async function findNearbyPolice() {
+  addLog('🔍 Searching nearby police stations...', 'info');
+  try {
+    const resp = await fetch('/api/nearby_police', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({lat: currentLat, lng: currentLng, address: ''})
+    });
+    const data = await resp.json();
+    renderPolice(data);
+    document.getElementById('statPolice').textContent = data.length;
+    addLog(`Found ${data.length} police stations`, 'success');
+  } catch(e) { addLog(`Police search error: ${e.message}`, 'error'); }
+}
+
+// ===== REPORT =====
+async function downloadReport() {
+  if (!currentAccident) return;
+  addLog(`📋 Opening police report for ${currentAccident.id}...`, 'info');
+  window.open(`/api/generate_report/${currentAccident.id}`, '_blank');
+}
+
+async function downloadPoliceReport() {
+  if (!currentAccident) { addLog('No active accident to generate report for', 'warn'); return; }
+  downloadReport();
+}
+
+function openApproveModal() {
+  if (!currentAccident) { addLog('No active accident to approve', 'warn'); return; }
+  document.getElementById('approveResult').textContent = '';
+  openModal('approveModal');
+}
+
+async function submitApproval() {
+  if (!currentAccident) return;
+  const officer = document.getElementById('approveOfficerName').value.trim();
+  const badge = document.getElementById('approveBadge').value.trim();
+  const station = document.getElementById('approveStation').value.trim();
+  const remarks = document.getElementById('approveRemarks').value.trim() ||
+                  'Cleared for hospital treatment. Proceed immediately.';
+  if (!officer) { document.getElementById('approveResult').textContent = '⚠ Enter officer name'; return; }
+
+  document.getElementById('approveResult').textContent = '⏳ Submitting approval...';
+  try {
+    const resp = await fetch(`/api/approve_report/${currentAccident.id}`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ officer_name: officer, badge, station_name: station, remarks })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      document.getElementById('approveResult').textContent = '✅ Report approved! Regenerating with stamp...';
+      addLog(`✅ Report ${currentAccident.id} approved by ${officer}`, 'success');
+      setTimeout(() => {
+        closeModal('approveModal');
+        window.open(`/api/generate_report/${currentAccident.id}`, '_blank');
+      }, 1200);
+    } else {
+      document.getElementById('approveResult').textContent = `❌ ${data.error}`;
+    }
+  } catch(e) {
+    document.getElementById('approveResult').textContent = `❌ Error: ${e.message}`;
+  }
+}
+
+// ===== LOG =====
+function addLog(msg, type = 'info') {
+  const container = document.getElementById('systemLog');
+  const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `<span class="log-time">${time}</span><span class="log-msg ${type}">${msg}</span>`;
+  container.insertBefore(entry, container.firstChild);
+  if (container.children.length > 50) container.removeChild(container.lastChild);
+}
+
+// ===== TABS =====
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+  // Find clicked tab
+  const allTabs = document.querySelectorAll('.tab');
+  const tabNames = ['hospitals','police','notifications','history'];
+  allTabs[tabNames.indexOf(name)]?.classList.add('active');
+}
+
+// ===== UTILS =====
+function dismissAlert() {
+  document.getElementById('alertPanel').classList.remove('visible');
+}
+
+function clearAccidents() {
+  document.getElementById('alertPanel').classList.remove('visible');
+  document.getElementById('hospitalsContainer').innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px">Cleared</div>';
+  document.getElementById('policeContainer').innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px">Cleared</div>';
+  document.getElementById('historyContainer').innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px">Cleared</div>';
+  addLog('All alerts cleared', 'warn');
+}
+
+function openMap(lat, lng) {
+  window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+}
+
+function callHospital(phone) {
+  addLog(`📞 Calling: ${phone}`, 'info');
+  window.open(`tel:${phone.replace(/[^+\d]/g, '')}`);
+}
+
+function callStation(phone) {
+  addLog(`📞 Calling station: ${phone}`, 'info');
+  window.open(`tel:${phone.replace(/[^+\d]/g, '')}`);
+}
+
+function notifyHospital(name) {
+  addLog(`📤 Manual notification sent to ${name}`, 'success');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function openWhatsAppConfig() { openModal('waModal'); }
+
+async function sendTestWhatsApp() {
+  const result = document.getElementById('waTestResult');
+  result.textContent = '⏳ Sending test message...';
+  try {
+    const resp = await fetch('/api/send_whatsapp', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        id: 'TEST-001',
+        timestamp_readable: new Date().toLocaleString(),
+        confidence: 0.95,
+        severity: 'TEST',
+        location: {lat: currentLat, lng: currentLng, address: 'Test Location'},
+        hospitals: [], police_stations: []
+      })
+    });
+    const data = await resp.json();
+    result.textContent = data.success ? '✅ Test message sent!' : `❌ ${data.message || 'Check WhatsApp config'}`;
+  } catch(e) { result.textContent = `❌ Error: ${e.message}`; }
+}
+
+function testNotifications() {
+  addLog('🔔 Test notification sent', 'success');
+  addNotifications({
+    id: 'TEST-001',
+    timestamp_readable: new Date().toLocaleString(),
+    hospitals: [{name: 'Test Hospital'}],
+    police_stations: [{name: 'Test Station'}]
+  });
+}
+
+function exportLogs() {
+  const logs = document.getElementById('systemLog').innerText;
+  const blob = new Blob([logs], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `falcon_logs_${Date.now()}.txt`;
+  a.click();
+}
+
+function playAlertSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.5);
+    setTimeout(() => {
+      const osc2 = ctx.createOscillator();
+      const g2 = ctx.createGain();
+      osc2.connect(g2);
+      g2.connect(ctx.destination);
+      osc2.frequency.value = 660;
+      g2.gain.setValueAtTime(0.3, ctx.currentTime);
+      g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc2.start(ctx.currentTime);
+      osc2.stop(ctx.currentTime + 0.5);
+    }, 300);
+  } catch(e) {}
+}
+
+function toggleDetection() {
+  const on = document.getElementById('toggleDetection').checked;
+  addLog(`Detection ${on ? 'ENABLED' : 'DISABLED'}`, on ? 'success' : 'warn');
+  if (on) {
+    document.getElementById('detectionStatus').className = 'status-pill online';
+    document.getElementById('detectionStatus').querySelector('span:last-child').textContent = 'DETECTING';
+  } else {
+    document.getElementById('detectionStatus').className = 'status-pill offline';
+    document.getElementById('detectionStatus').querySelector('span:last-child').textContent = 'DETECTION OFF';
+  }
+}
+
+// ===== INIT =====
+detectLocation();
+addLog('Location service initialized', 'success');
+addLog('Hospital finder ready (OSM/Overpass API)', 'success');
+addLog('Police finder ready', 'success');
+addLog('Notification service standby', 'success');
+addLog('WhatsApp service standby', 'info');
+addLog('Report generator ready', 'success');
+
+// Tab click fix
+document.querySelectorAll('.tab').forEach((tab, i) => {
+  const names = ['hospitals', 'police', 'notifications', 'history'];
+  tab.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(`tab-${names[i]}`).classList.add('active');
+  };
+});
+</script>
+</body>
+</html>

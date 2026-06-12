@@ -1,0 +1,389 @@
+{
+  "id": "ACC_20260417145346",
+  "timestamp": "2026-04-17T14:53:46.577566",
+  "timestamp_readable": "17 Apr 2026, 02:53:46 PM",
+  "confidence": 1.0,
+  "location": {
+    "lat": 12.9716,
+    "lng": 77.5946,
+    "address": "Bengaluru, Karnataka, India",
+    "city": "Bengaluru",
+    "region": "Karnataka",
+    "country": "India",
+    "postal": "560001"
+  },
+  "hospitals": [
+    {
+      "name": "Mallya Audikesh Diagnostics Center",
+      "lat": 12.9815051,
+      "lng": 77.6011944,
+      "distance_km": 1.31,
+      "address": "Infantry Road",
+      "phone": "+918022868423",
+      "emergency": true,
+      "beds": 406,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 19
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "General Surgery",
+          "available": true,
+          "experience_years": 21
+        },
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "Emergency Medicine",
+          "available": true,
+          "experience_years": 9
+        }
+      ],
+      "available_doctors": 3,
+      "eta_minutes": 5
+    },
+    {
+      "name": "Mallige Medical Centre",
+      "lat": 12.985247,
+      "lng": 77.5803846,
+      "distance_km": 2.16,
+      "address": "Crescent Rd,Nehru Nagar,Gandhi Nagar",
+      "phone": "080 2220 3333",
+      "emergency": true,
+      "beds": 436,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Meena Rao",
+          "specialty": "Trauma Surgery",
+          "available": false,
+          "experience_years": 22
+        },
+        {
+          "name": "Dr. Rajesh Kumar",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 21
+        },
+        {
+          "name": "Dr. Arjun Singh",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 16
+        },
+        {
+          "name": "Dr. Mohammed Khalid",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 12
+        },
+        {
+          "name": "Dr. Lakshmi Iyer",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 9
+        }
+      ],
+      "available_doctors": 4,
+      "eta_minutes": 6
+    },
+    {
+      "name": "Government Primary Health Centre",
+      "lat": 12.9503234,
+      "lng": 77.6162619,
+      "distance_km": 3.33,
+      "address": "Near 12.972, 77.595",
+      "phone": "+91-7586429549",
+      "emergency": true,
+      "beds": 207,
+      "type": "hospital",
+      "doctors": [
+        {
+          "name": "Dr. Deepa Nair",
+          "specialty": "General Surgery",
+          "available": true,
+          "experience_years": 10
+        },
+        {
+          "name": "Dr. Kavitha Reddy",
+          "specialty": "General Surgery",
+          "available": true,
+          "experience_years": 15
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Orthopedic Surgery",
+          "available": false,
+          "experience_years": 19
+        },
+        {
+          "name": "Dr. Meena Rao",
+          "specialty": "Trauma Surgery",
+          "available": false,
+          "experience_years": 15
+        },
+        {
+          "name": "Dr. Arjun Singh",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 6
+        }
+      ],
+      "available_doctors": 3,
+      "eta_minutes": 9
+    },
+    {
+      "name": "Bengaluru Hospital, Susruta Medical Aid AndResearch Home Limited",
+      "lat": 12.9376734,
+      "lng": 77.5802836,
+      "distance_km": 4.08,
+      "address": "202, R.V.Road",
+      "phone": "+91-8712271619",
+      "emergency": true,
+      "beds": 178,
+      "type": "hospital",
+      "doctors": [
+        {
+          "name": "Dr. Rajesh Kumar",
+          "specialty": "Trauma Surgery",
+          "available": false,
+          "experience_years": 11
+        },
+        {
+          "name": "Dr. Anil Verma",
+          "specialty": "Critical Care",
+          "available": false,
+          "experience_years": 24
+        },
+        {
+          "name": "Dr. Sunita Patel",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 20
+        }
+      ],
+      "available_doctors": 1,
+      "eta_minutes": 12
+    },
+    {
+      "name": "Ramakrishna Nursing Home and Hospital",
+      "lat": 12.9364329,
+      "lng": 77.583477,
+      "distance_km": 4.09,
+      "address": "Near 12.972, 77.595",
+      "phone": "+91-9625692190",
+      "emergency": true,
+      "beds": 211,
+      "type": "hospital",
+      "doctors": [
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 13
+        },
+        {
+          "name": "Dr. Deepa Nair",
+          "specialty": "Emergency Medicine",
+          "available": true,
+          "experience_years": 9
+        },
+        {
+          "name": "Dr. Kavitha Reddy",
+          "specialty": "General Surgery",
+          "available": true,
+          "experience_years": 18
+        },
+        {
+          "name": "Dr. Meena Rao",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 23
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 18
+        },
+        {
+          "name": "Dr. Mohammed Khalid",
+          "specialty": "Emergency Medicine",
+          "available": false,
+          "experience_years": 9
+        }
+      ],
+      "available_doctors": 5,
+      "eta_minutes": 12
+    },
+    {
+      "name": "Manipal Northside Hospital",
+      "lat": 13.0011275,
+      "lng": 77.5639285,
+      "distance_km": 4.67,
+      "address": "71, 11Th Main Road, Opposite Malleshwaram Railway Station, Malleshwaram",
+      "phone": "080 2222 1111",
+      "emergency": true,
+      "beds": 372,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Lakshmi Iyer",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 15
+        },
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 25
+        },
+        {
+          "name": "Dr. Rajesh Kumar",
+          "specialty": "Emergency Medicine",
+          "available": false,
+          "experience_years": 19
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 10
+        },
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Emergency Medicine",
+          "available": false,
+          "experience_years": 23
+        }
+      ],
+      "available_doctors": 3,
+      "eta_minutes": 14
+    }
+  ],
+  "police_stations": [
+    {
+      "name": "Koramangala Police Station",
+      "lat": 12.951600000000001,
+      "lng": 77.6046,
+      "distance_km": 2.47,
+      "address": "Main Road, Sector 2, Bengaluru, Karnataka, India",
+      "phone": "100 / +91-9480235888",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "SI Ramesh Nayak",
+          "rank": "SI",
+          "badge": "KA6940",
+          "on_duty": false
+        },
+        {
+          "name": "SI Fatima Begum",
+          "rank": "SI",
+          "badge": "KA3650",
+          "on_duty": false
+        },
+        {
+          "name": "ASI Vikram Singh",
+          "rank": "ASI",
+          "badge": "KA6873",
+          "on_duty": true
+        }
+      ],
+      "available_officers": 1,
+      "eta_minutes": 7,
+      "station_id": "PS556"
+    },
+    {
+      "name": "MG Road Police Station",
+      "lat": 12.986600000000001,
+      "lng": 77.6146,
+      "distance_km": 2.73,
+      "address": "Main Road, Sector 1, Bengaluru, Karnataka, India",
+      "phone": "100 / +91-8103091931",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "HC Suresh Babu",
+          "rank": "HC",
+          "badge": "KA9665",
+          "on_duty": false
+        },
+        {
+          "name": "ASI Vikram Singh",
+          "rank": "ASI",
+          "badge": "KA1329",
+          "on_duty": true
+        }
+      ],
+      "available_officers": 1,
+      "eta_minutes": 8,
+      "station_id": "PS513"
+    },
+    {
+      "name": "Whitefield Police Station",
+      "lat": 12.9616,
+      "lng": 77.5696,
+      "distance_km": 2.93,
+      "address": "Main Road, Sector 4, Bengaluru, Karnataka, India",
+      "phone": "100 / +91-8727947521",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "SI Fatima Begum",
+          "rank": "SI",
+          "badge": "KA9654",
+          "on_duty": true
+        },
+        {
+          "name": "HC Suresh Babu",
+          "rank": "HC",
+          "badge": "KA6464",
+          "on_duty": true
+        },
+        {
+          "name": "ASI Pradeep Kumar",
+          "rank": "ASI",
+          "badge": "KA7369",
+          "on_duty": true
+        }
+      ],
+      "available_officers": 3,
+      "eta_minutes": 8,
+      "station_id": "PS135"
+    },
+    {
+      "name": "Indiranagar Police Station",
+      "lat": 12.9966,
+      "lng": 77.5796,
+      "distance_km": 3.22,
+      "address": "Main Road, Sector 3, Bengaluru, Karnataka, India",
+      "phone": "100 / +91-8705340981",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "SI Fatima Begum",
+          "rank": "SI",
+          "badge": "KA3965",
+          "on_duty": true
+        },
+        {
+          "name": "SI Ramesh Nayak",
+          "rank": "SI",
+          "badge": "KA1294",
+          "on_duty": true
+        }
+      ],
+      "available_officers": 2,
+      "eta_minutes": 9,
+      "station_id": "PS607"
+    }
+  ],
+  "frame_path": "static/accidents/accident_20260417_145346.jpg",
+  "severity": "CRITICAL"
+}

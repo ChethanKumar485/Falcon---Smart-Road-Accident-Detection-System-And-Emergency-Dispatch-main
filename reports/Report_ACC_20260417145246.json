@@ -1,0 +1,398 @@
+{
+  "id": "ACC_20260417145246",
+  "timestamp": "2026-04-17T14:52:46.035049",
+  "timestamp_readable": "17 Apr 2026, 02:52:46 PM",
+  "confidence": 0.672,
+  "location": {
+    "lat": 17.3843,
+    "lng": 78.4583,
+    "address": "Hyderabad, Telangana, India",
+    "city": "Hyderabad",
+    "region": "Telangana",
+    "country": "India",
+    "postal": "500003"
+  },
+  "hospitals": [
+    {
+      "name": "District Medical Center",
+      "lat": 17.374299999999998,
+      "lng": 78.47829999999999,
+      "distance_km": 2.4,
+      "address": "Sector 2, Hyderabad, Telangana, India",
+      "phone": "+91-7382462810",
+      "emergency": true,
+      "beds": 373,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 12
+        },
+        {
+          "name": "Dr. Rajesh Kumar",
+          "specialty": "Critical Care",
+          "available": false,
+          "experience_years": 14
+        },
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 9
+        },
+        {
+          "name": "Dr. Sunita Patel",
+          "specialty": "Critical Care",
+          "available": false,
+          "experience_years": 9
+        },
+        {
+          "name": "Dr. Anil Verma",
+          "specialty": "Neurosurgery",
+          "available": true,
+          "experience_years": 8
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Orthopedic Surgery",
+          "available": false,
+          "experience_years": 11
+        }
+      ],
+      "available_doctors": 3,
+      "eta_minutes": 7
+    },
+    {
+      "name": "City Government Hospital",
+      "lat": 17.4043,
+      "lng": 78.4683,
+      "distance_km": 2.46,
+      "address": "Sector 1, Hyderabad, Telangana, India",
+      "phone": "+91-7171417934",
+      "emergency": true,
+      "beds": 321,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Arjun Singh",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 6
+        },
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "Emergency Medicine",
+          "available": false,
+          "experience_years": 19
+        },
+        {
+          "name": "Dr. Kavitha Reddy",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 19
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 8
+        },
+        {
+          "name": "Dr. Mohammed Khalid",
+          "specialty": "General Surgery",
+          "available": true,
+          "experience_years": 7
+        }
+      ],
+      "available_doctors": 4,
+      "eta_minutes": 7
+    },
+    {
+      "name": "Apollo Specialty Hospital",
+      "lat": 17.3643,
+      "lng": 78.44829999999999,
+      "distance_km": 2.46,
+      "address": "Sector 4, Hyderabad, Telangana, India",
+      "phone": "+91-7168493958",
+      "emergency": true,
+      "beds": 361,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Rajesh Kumar",
+          "specialty": "Neurosurgery",
+          "available": true,
+          "experience_years": 11
+        },
+        {
+          "name": "Dr. Sunita Patel",
+          "specialty": "Critical Care",
+          "available": false,
+          "experience_years": 17
+        },
+        {
+          "name": "Dr. Lakshmi Iyer",
+          "specialty": "General Surgery",
+          "available": false,
+          "experience_years": 25
+        },
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Emergency Medicine",
+          "available": true,
+          "experience_years": 22
+        },
+        {
+          "name": "Dr. Vikram Gupta",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 7
+        },
+        {
+          "name": "Dr. Anil Verma",
+          "specialty": "Neurosurgery",
+          "available": false,
+          "experience_years": 19
+        }
+      ],
+      "available_doctors": 3,
+      "eta_minutes": 7
+    },
+    {
+      "name": "NIMHANS Hospital",
+      "lat": 17.3943,
+      "lng": 78.4883,
+      "distance_km": 3.37,
+      "address": "Sector 5, Hyderabad, Telangana, India",
+      "phone": "+91-8895313129",
+      "emergency": true,
+      "beds": 220,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Sanjay Mehta",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 6
+        },
+        {
+          "name": "Dr. Mohammed Khalid",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 22
+        },
+        {
+          "name": "Dr. Deepa Nair",
+          "specialty": "Emergency Medicine",
+          "available": true,
+          "experience_years": 24
+        },
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 6
+        },
+        {
+          "name": "Dr. Rajesh Kumar",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 21
+        },
+        {
+          "name": "Dr. Sunita Patel",
+          "specialty": "Emergency Medicine",
+          "available": false,
+          "experience_years": 21
+        }
+      ],
+      "available_doctors": 5,
+      "eta_minutes": 10
+    },
+    {
+      "name": "St. John's Medical College Hospital",
+      "lat": 17.4143,
+      "lng": 78.4383,
+      "distance_km": 3.95,
+      "address": "Sector 3, Hyderabad, Telangana, India",
+      "phone": "+91-7862544756",
+      "emergency": true,
+      "beds": 163,
+      "type": "Hospital",
+      "doctors": [
+        {
+          "name": "Dr. Lakshmi Iyer",
+          "specialty": "Orthopedic Surgery",
+          "available": true,
+          "experience_years": 9
+        },
+        {
+          "name": "Dr. Kavitha Reddy",
+          "specialty": "General Surgery",
+          "available": true,
+          "experience_years": 23
+        },
+        {
+          "name": "Dr. Meena Rao",
+          "specialty": "Critical Care",
+          "available": true,
+          "experience_years": 15
+        },
+        {
+          "name": "Dr. Rajesh Kumar",
+          "specialty": "Trauma Surgery",
+          "available": true,
+          "experience_years": 11
+        },
+        {
+          "name": "Dr. Priya Sharma",
+          "specialty": "General Surgery",
+          "available": true,
+          "experience_years": 17
+        }
+      ],
+      "available_doctors": 5,
+      "eta_minutes": 11
+    }
+  ],
+  "police_stations": [
+    {
+      "name": "Koramangala Police Station",
+      "lat": 17.3643,
+      "lng": 78.4683,
+      "distance_km": 2.46,
+      "address": "Main Road, Sector 2, Hyderabad, Telangana, India",
+      "phone": "100 / +91-8347593362",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "HC Anand Reddy",
+          "rank": "HC",
+          "badge": "KA7030",
+          "on_duty": false
+        },
+        {
+          "name": "SI Meera Pillai",
+          "rank": "SI",
+          "badge": "KA6070",
+          "on_duty": true
+        },
+        {
+          "name": "SI Ramesh Nayak",
+          "rank": "SI",
+          "badge": "KA3914",
+          "on_duty": true
+        },
+        {
+          "name": "HC Deepak Yadav",
+          "rank": "HC",
+          "badge": "KA7590",
+          "on_duty": false
+        }
+      ],
+      "available_officers": 2,
+      "eta_minutes": 7,
+      "station_id": "PS907"
+    },
+    {
+      "name": "MG Road Police Station",
+      "lat": 17.3993,
+      "lng": 78.47829999999999,
+      "distance_km": 2.7,
+      "address": "Main Road, Sector 1, Hyderabad, Telangana, India",
+      "phone": "100 / +91-8208849233",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "SI Ramesh Nayak",
+          "rank": "SI",
+          "badge": "KA3342",
+          "on_duty": true
+        },
+        {
+          "name": "SI Fatima Begum",
+          "rank": "SI",
+          "badge": "KA3937",
+          "on_duty": false
+        },
+        {
+          "name": "ASI Vikram Singh",
+          "rank": "ASI",
+          "badge": "KA6976",
+          "on_duty": false
+        }
+      ],
+      "available_officers": 1,
+      "eta_minutes": 8,
+      "station_id": "PS478"
+    },
+    {
+      "name": "Whitefield Police Station",
+      "lat": 17.374299999999998,
+      "lng": 78.43329999999999,
+      "distance_km": 2.88,
+      "address": "Main Road, Sector 4, Hyderabad, Telangana, India",
+      "phone": "100 / +91-8756160788",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "HC Suresh Babu",
+          "rank": "HC",
+          "badge": "KA1688",
+          "on_duty": true
+        },
+        {
+          "name": "HC Anand Reddy",
+          "rank": "HC",
+          "badge": "KA7295",
+          "on_duty": true
+        },
+        {
+          "name": "HC Deepak Yadav",
+          "rank": "HC",
+          "badge": "KA8395",
+          "on_duty": true
+        }
+      ],
+      "available_officers": 3,
+      "eta_minutes": 8,
+      "station_id": "PS403"
+    },
+    {
+      "name": "Indiranagar Police Station",
+      "lat": 17.409299999999998,
+      "lng": 78.4433,
+      "distance_km": 3.2,
+      "address": "Main Road, Sector 3, Hyderabad, Telangana, India",
+      "phone": "100 / +91-9338565194",
+      "jurisdiction": "Karnataka Police",
+      "officers": [
+        {
+          "name": "HC Deepak Yadav",
+          "rank": "HC",
+          "badge": "KA1231",
+          "on_duty": true
+        },
+        {
+          "name": "SI Fatima Begum",
+          "rank": "SI",
+          "badge": "KA3109",
+          "on_duty": false
+        },
+        {
+          "name": "HC Suresh Babu",
+          "rank": "HC",
+          "badge": "KA3248",
+          "on_duty": true
+        }
+      ],
+      "available_officers": 2,
+      "eta_minutes": 9,
+      "station_id": "PS458"
+    }
+  ],
+  "frame_path": "static/accidents/accident_20260417_145246.jpg",
+  "severity": "HIGH"
+}
