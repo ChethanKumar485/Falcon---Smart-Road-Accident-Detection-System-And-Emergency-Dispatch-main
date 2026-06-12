@@ -229,4 +229,13 @@ MIT License — Free for educational and emergency response use.
 
 ---
 
-*FALCON — Because every second counts* 🦅
+## 👨‍💻 Author
+Chethan Kumar
+
+GitHub: @ChethanKumar485
+
+---
+## ⭐ Support
+
+If you like this project, give it a ⭐ on GitHub!" 🚀
+
