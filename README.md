@@ -64,6 +64,27 @@ A full-stack AI-powered road accident detection and emergency dispatch system wi
 
 ---
 
+## 📸Screen-shots
+
+---
+<img width="1899" height="395" alt="Screenshot 2026-04-17 122338" src="https://github.com/user-attachments/assets/4eb3151e-b6b5-4d86-8976-7a60057341b9" />
+
+---
+<img width="1899" height="395" alt="Screenshot 2026-04-17 122338" src="https://github.com/user-attachments/assets/dbbed689-78ed-4ef9-a438-17924c9a9788" />
+
+---
+<img width="1871" height="834" alt="Screenshot 2026-04-17 093219" src="https://github.com/user-attachments/assets/ab4c52ec-295c-4ff1-aaf2-ade5b9921f03" />
+
+---
+<img width="639" height="651" alt="Screenshot 2026-04-17 092324" src="https://github.com/user-attachments/assets/c1e62b32-575c-460e-bb2d-ee323178da8b" />
+
+---
+<img width="1919" height="868" alt="Screenshot 2026-04-14 210637" src="https://github.com/user-attachments/assets/5c3eb01c-5174-4656-b633-eca46f9d5001" />
+
+---
+
+
+
 ## 📦 Installation
 
 ### 1. Clone & Setup
